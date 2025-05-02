@@ -2,40 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="5dp">
 
     <TextView
+        style="@style/list_item_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="List: "/>
+        android:text="@string/list_label"/>
 
     <TextView
         android:id="@+id/item_list_id"
+        style="@style/list_item"
         android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:text="0000"/>
+        android:layout_height="wrap_content"/>
 
     <TextView
+        style="@style/list_item_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ID: "/>
+        android:text="@string/id_label"/>
 
     <TextView
         android:id="@+id/item_id"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:text="0000"/>
+        style="@style/list_item"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"/>
 
     <TextView
+        style="@style/list_item_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name: "/>
+        android:text="@string/name_label"/>
 
     <TextView
         android:id="@+id/item_name"
+        style="@style/list_item"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="0000"/>
+        android:layout_weight="1"/>
 
 </LinearLayout>

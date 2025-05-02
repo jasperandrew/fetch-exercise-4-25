@@ -10,4 +10,7 @@
     <string name="name">Name</string>
     <string name="network_error">Error retrieving data over network</string>
     <string name="json_error">Error parsing JSON data</string>
+    <string name="list_label">List:</string>
+    <string name="id_label">ID:</string>
+    <string name="name_label">Name:</string>
 </resources>
