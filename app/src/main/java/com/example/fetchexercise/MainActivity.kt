@@ -12,10 +12,14 @@ import org.json.JSONArray
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
+import java.time.temporal.IsoFields
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private var itemList: List<Item> = listOf()
+    private lateinit var itemListAdapter: ItemListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,28 +29,29 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        itemListAdapter = ItemListAdapter(this, itemList.toMutableList())
+        binding.list.adapter = itemListAdapter
+
+        refreshItemlist()
+    }
+
+    private fun refreshItemlist() {
         lifecycleScope.launch(Dispatchers.IO) {
             val jsonString = dataFromUrl("https://hiring.fetch.com/hiring.json") // todo: catch network errors
             val jsonArray = JSONArray(jsonString) // todo: catch json errors
 
-            val itemList = mutableListOf<Item>()
+            val items = mutableListOf<Item>()
             for(i in 0..jsonArray.length()) {
                 jsonArray.optJSONObject(i)?.run {
                     val id = optInt("id", -1)
                     val listId = optInt("listId", -1)
-                    val name = optString("name")
-                    if (id == -1 || listId == -1 || name == "null" || name == "") return@run // "Filter out any items where "name" is blank or null"
-                    itemList.add(Item(id, listId, name))
+                    if (id != -1 && listId != -1)
+                        items.add(Item(id, listId, optString("name")))
                 }
             }
 
-            // Does "Display all the items grouped by "listId"" mean something different
-            //   than "Sort the results first by "listId" ..."?
-            itemList.sortWith(compareBy<Item> { it.listId }.thenBy { it.name })
-
-            runOnUiThread {
-                binding.list.adapter = ItemListAdapter(this@MainActivity, itemList)
-            }
+            itemList = items
+            updateListView()
         }
     }
 
@@ -61,19 +66,96 @@ class MainActivity : AppCompatActivity() {
         return jsonData.toString()
     }
 
+    private fun updateListView() = runOnUiThread {
+        val items = itemList.filter { it.name != "null" && it.name != "" }.toMutableList() // "Filter out any items where "name" is blank or null"
+
+        if (groupByListID) {
+            // Does "Display all the items grouped by "listId"" mean something different
+            //   than "Sort the results first by "listId" ..."?
+            items.sortWith(
+                compareBy<Item> { it.listId }
+                .thenBy {
+                    if (sortBy == SortBy.NAME) it.name
+                    else it.id
+                })
+        } else {
+            items.sortWith(compareBy {
+                when (sortBy) {
+                    SortBy.NAME -> it.name
+                    SortBy.ID -> it.id
+                    SortBy.LISTID -> it.listId
+                }
+            })
+        }
+
+        if (sortDescending)
+            items.reverse()
+
+        itemListAdapter.updateList(items)
+    }
+
+    private lateinit var listSortItem: MenuItem
+    private lateinit var nameSortItem: MenuItem
+
+    enum class SortBy { ID, LISTID, NAME }
+
+    private var groupByListID = true
+    private var sortDescending = false
+    private var sortBy = SortBy.NAME
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+        listSortItem = menu.findItem(R.id.action_sort_listid)
+        nameSortItem = menu.findItem(R.id.action_sort_name)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+        if (item.isCheckable)
+            item.setChecked(!item.isChecked)
+
+        var update = false
+
+        when (item.itemId) {
+            R.id.action_group_listid -> {
+                groupByListID = item.isChecked
+                listSortItem.apply {
+                    isVisible = !item.isChecked
+                    if (!isVisible && isChecked) {
+                        isChecked = false
+                        nameSortItem.setChecked(true)
+                        sortBy = SortBy.NAME
+                    }
+                }
+                update = true
+            }
+            R.id.action_sort_ascending -> {
+                sortDescending = false
+                update = true
+            }
+            R.id.action_sort_descending -> {
+                sortDescending = true
+                update = true
+            }
+            R.id.action_sort_id -> {
+                sortBy = SortBy.ID
+                update = true
+            }
+            R.id.action_sort_listid -> {
+                sortBy = SortBy.LISTID
+                update = true
+            }
+            R.id.action_sort_name -> {
+                sortBy = SortBy.NAME
+                update = true
+            }
         }
+
+        if (update) {
+            updateListView()
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }

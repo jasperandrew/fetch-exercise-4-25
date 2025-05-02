@@ -2,9 +2,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.fetchexercise.MainActivity">
+
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/action_group_listid"
+        android:title="Group By List ID"
+        android:checkable="true"
+        android:checked="true"
+        app:showAsAction="never"/>
+    <item
+        android:title="Sort Direction">
+        <menu>
+            <group
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_sort_ascending"
+                    android:title="Ascending"
+                    app:showAsAction="never"
+                    android:checked="true"/>
+                <item
+                    android:id="@+id/action_sort_descending"
+                    android:title="Descending"
+                    app:showAsAction="never"/>
+            </group>
+        </menu>
+    </item>
+    <item
+        android:title="Sort By">
+        <menu>
+            <group
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_sort_id"
+                    android:title="ID"
+                    app:showAsAction="never" />
+                <item
+                    android:id="@+id/action_sort_listid"
+                    android:title="List ID"
+                    app:showAsAction="never"
+                    android:visible="false"/>
+                <item
+                    android:id="@+id/action_sort_name"
+                    android:title="Name"
+                    app:showAsAction="never"
+                    android:checked="true"/>
+            </group>
+        </menu>
+    </item>
 </menu>

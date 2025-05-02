@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 
-class ItemListAdapter(ctx: Context, itemList: List<Item>)
-    : ArrayAdapter<Item>(ctx, 0, itemList) {
+class ItemListAdapter(context: Context, itemList: List<Item>)
+    : ArrayAdapter<Item>(context, 0, itemList) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var view = convertView
@@ -28,6 +28,13 @@ class ItemListAdapter(ctx: Context, itemList: List<Item>)
         holder.nameView.text = item.name
 
         return view!!
+    }
+
+    fun updateList(itemList: List<Item>) {
+        clear()
+        for (item in itemList)
+            insert(item, count)
+        notifyDataSetChanged()
     }
 
     inner class ItemViewHolder(view: View) {
