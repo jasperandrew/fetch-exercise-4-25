@@ -91,6 +91,9 @@ class MainActivity : AppCompatActivity() {
         if (groupByListID) {
             // Does "Display all the items grouped by "listId"" mean something different
             //   than "Sort the results first by "listId" ..."?
+            // I thought about doing a "sticky" group header system, but it would involve creating a
+            //   separate list adapter with a bunch of custom logic (or using a 3rd-party library),
+            //   and I decided it was outside the scope of this exercise
             itemList.sortWith(
                 compareBy<Item> { it.listId }
                 .thenBy {
