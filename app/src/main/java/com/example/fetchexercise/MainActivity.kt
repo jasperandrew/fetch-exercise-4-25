@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private var itemList: List<Item> = listOf()
+    private var itemList: MutableList<Item> = mutableListOf()
     private lateinit var itemListAdapter: ItemListAdapter
 
     companion object {
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        itemListAdapter = ItemListAdapter(this, itemList.toMutableList())
+        itemListAdapter = ItemListAdapter(this, itemList)
         binding.list.adapter = itemListAdapter
 
         refreshItemlist()
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            itemList = items
+            itemList = items.filter { it.name != "null" && it.name != "" }.toMutableList() // "Filter out any items where "name" is blank or null"
             updateListView()
         }
     }
@@ -88,19 +88,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateListView() = runOnUiThread {
-        val items = itemList.filter { it.name != "null" && it.name != "" }.toMutableList() // "Filter out any items where "name" is blank or null"
-
         if (groupByListID) {
             // Does "Display all the items grouped by "listId"" mean something different
             //   than "Sort the results first by "listId" ..."?
-            items.sortWith(
+            itemList.sortWith(
                 compareBy<Item> { it.listId }
                 .thenBy {
                     if (sortBy == SortBy.NAME) it.name
                     else it.id
                 })
         } else {
-            items.sortWith(compareBy {
+            itemList.sortWith(compareBy {
                 when (sortBy) {
                     SortBy.NAME -> it.name
                     SortBy.ID -> it.id
@@ -110,9 +108,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (sortDescending)
-            items.reverse()
+            itemList.reverse()
 
-        itemListAdapter.updateList(items)
+        itemListAdapter.updateList(itemList)
     }
 
     private lateinit var listSortItem: MenuItem
