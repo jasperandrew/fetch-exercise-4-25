@@ -3,6 +3,7 @@ package com.example.fetchexercise
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.fetchexercise.databinding.ActivityMainBinding
@@ -12,7 +13,6 @@ import org.json.JSONArray
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
-import java.time.temporal.IsoFields
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +20,10 @@ class MainActivity : AppCompatActivity() {
 
     private var itemList: List<Item> = listOf()
     private lateinit var itemListAdapter: ItemListAdapter
+
+    companion object {
+        const val DATA_URL = "https://hiring.fetch.com/hiring.json"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +41,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshItemlist() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val jsonString = dataFromUrl("https://hiring.fetch.com/hiring.json") // todo: catch network errors
-            val jsonArray = JSONArray(jsonString) // todo: catch json errors
+            val jsonString: String
+            try {
+                jsonString = retrieveJSON()
+            } catch (e: Exception) {
+                toast(R.string.network_error)
+                return@launch
+            }
+
+            val jsonArray: JSONArray
+            try {
+                jsonArray = JSONArray(jsonString)
+            } catch (e: Exception) {
+                toast(R.string.json_error)
+                return@launch
+            }
 
             val items = mutableListOf<Item>()
             for(i in 0..jsonArray.length()) {
@@ -55,8 +72,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun dataFromUrl(url: String): String {
-        val reader = BufferedReader(InputStreamReader(URL(url).openConnection().getInputStream()))
+    private fun toast(msgResId: Int) = runOnUiThread {
+        Toast.makeText(this@MainActivity, getString(msgResId), Toast.LENGTH_LONG).show()
+    }
+
+    private fun retrieveJSON(): String {
+        val reader = BufferedReader(InputStreamReader(URL(DATA_URL).openConnection().getInputStream()))
         var line: String?
         val jsonData = StringBuilder()
         while (reader.readLine().also { line = it } != null) {

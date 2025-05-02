@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">Fetch Exercise</string>
-    <string name="action_settings">Settings</string>
+    <string name="group_by_list_id">Group By List ID</string>
+    <string name="sort_direction">Sort Direction</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="sort_by">Sort By</string>
+    <string name="id">ID</string>
+    <string name="list_id">List ID</string>
+    <string name="name">Name</string>
+    <string name="network_error">Error retrieving data over network</string>
+    <string name="json_error">Error parsing JSON data</string>
 </resources>

@@ -5,44 +5,44 @@
 
     <item
         android:id="@+id/action_group_listid"
-        android:title="Group By List ID"
+        android:title="@string/group_by_list_id"
         android:checkable="true"
         android:checked="true"
         app:showAsAction="never"/>
     <item
-        android:title="Sort Direction">
+        android:title="@string/sort_direction">
         <menu>
             <group
                 android:checkableBehavior="single">
                 <item
                     android:id="@+id/action_sort_ascending"
-                    android:title="Ascending"
+                    android:title="@string/ascending"
                     app:showAsAction="never"
                     android:checked="true"/>
                 <item
                     android:id="@+id/action_sort_descending"
-                    android:title="Descending"
+                    android:title="@string/descending"
                     app:showAsAction="never"/>
             </group>
         </menu>
     </item>
     <item
-        android:title="Sort By">
+        android:title="@string/sort_by">
         <menu>
             <group
                 android:checkableBehavior="single">
                 <item
                     android:id="@+id/action_sort_id"
-                    android:title="ID"
+                    android:title="@string/id"
                     app:showAsAction="never" />
                 <item
                     android:id="@+id/action_sort_listid"
-                    android:title="List ID"
+                    android:title="@string/list_id"
                     app:showAsAction="never"
                     android:visible="false"/>
                 <item
                     android:id="@+id/action_sort_name"
-                    android:title="Name"
+                    android:title="@string/name"
                     app:showAsAction="never"
                     android:checked="true"/>
             </group>
